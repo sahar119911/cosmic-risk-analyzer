@@ -1,1 +1,22 @@
 project_id = "tequijdrnfkcgbtiatcp"
+
+[api]
+enabled = true
+port = 54321
+max_rows = 1000
+
+[db]
+major_version = 15
+
+[db.pooler]
+enabled = false
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 20
+max_client_conn = 100
+
+[auth]
+enabled = true
+
+[functions.predict-conjunction]
+verify_jwt = false

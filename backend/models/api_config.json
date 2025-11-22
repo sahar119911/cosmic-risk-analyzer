@@ -1,0 +1,54 @@
+{
+  "model_info": {
+    "name": "PhysicsInformedGAT_Uncertainty",
+    "version": "2.0",
+    "description": "Physics-Informed Graph Attention Network with MC-Dropout Uncertainty",
+    "stage1_path": "models/pi_gat_stage1_trained.pth",
+    "stage2_path": "models/pi_gat_stage2_trained.pth",
+    "scalers_path": "models/scalers.pkl",
+    "id_encoder_path": "models/id_encoder.pkl"
+  },
+  "input_requirements": {
+    "node_features": [
+      "x",
+      "y",
+      "z",
+      "x_dot",
+      "y_dot",
+      "z_dot",
+      "cr_r",
+      "ct_t",
+      "cn_n"
+    ],
+    "edge_features": [
+      "miss_distance",
+      "relative_speed",
+      "angle_R_V_rel_deg",
+      "log_Error_Volume",
+      "Miss_over_SigmaR",
+      "Delta_Inclination_deg",
+      "Delta_SMA_km"
+    ],
+    "node_feature_dim": 9,
+    "edge_feature_dim": 7
+  },
+  "output_format": {
+    "collision_probability_log10": "float",
+    "epistemic_uncertainty": "float",
+    "aleatoric_uncertainty": "float",
+    "total_uncertainty": "float"
+  },
+  "performance_metrics": {
+    "validation_loss": 1.1232839822769165,
+    "stage2_r2": 0.9381246566772461,
+    "stage2_rmse": 0.12435950338840485,
+    "stage2_mae": 0.09604232758283615
+  },
+  "mc_dropout_settings": {
+    "default_samples": 100,
+    "recommended_range": [
+      50,
+      200
+    ]
+  }
+}
