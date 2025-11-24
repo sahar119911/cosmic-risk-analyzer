@@ -1,17 +1,50 @@
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { PredictionResponse } from "@/lib/api";
+import { toast } from "sonner";
 
 const Results = () => {
   const navigate = useNavigate();
+  const [result, setResult] = useState<PredictionResponse | null>(null);
+  const [fileName, setFileName] = useState<string>("");
 
-  const events = [
-    { id: "EVT-001", prediction: -5.92, epistemic: 0.45, aleatoric: 3.44, risk: "High", stage: "Stage-2" },
-    { id: "EVT-002", prediction: -7.23, epistemic: 0.32, aleatoric: 2.87, risk: "Medium", stage: "Stage-2" },
-    { id: "EVT-003", prediction: -9.14, epistemic: 0.28, aleatoric: 2.12, risk: "Low", stage: "Stage-1" },
-  ];
+  useEffect(() => {
+    // Load results from sessionStorage
+    const storedResult = sessionStorage.getItem("predictionResult");
+    const storedFileName = sessionStorage.getItem("fileName");
+
+    if (storedResult) {
+      try {
+        setResult(JSON.parse(storedResult));
+        setFileName(storedFileName || "Unknown file");
+      } catch (error) {
+        console.error("Failed to parse stored results:", error);
+        toast.error("Failed to load results");
+      }
+    }
+  }, []);
+
+  // Create events array from result or use placeholder data
+  const events = result
+    ? [
+        {
+          id: "EVT-001",
+          prediction: result.prediction,
+          epistemic: result.epistemic_uncertainty,
+          aleatoric: result.aleatoric_uncertainty,
+          risk: result.risk_category,
+          stage: result.stage,
+        },
+      ]
+    : [
+        { id: "EVT-001", prediction: -5.92, epistemic: 0.45, aleatoric: 3.44, risk: "High" as const, stage: "Stage-2" as const },
+        { id: "EVT-002", prediction: -7.23, epistemic: 0.32, aleatoric: 2.87, risk: "Medium" as const, stage: "Stage-2" as const },
+        { id: "EVT-003", prediction: -9.14, epistemic: 0.28, aleatoric: 2.12, risk: "Low" as const, stage: "Stage-1" as const },
+      ];
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -28,7 +61,10 @@ const Results = () => {
         <header className="flex items-center justify-between">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold text-foreground">Prediction Results</h1>
-            <p className="text-muted-foreground">Analysis completed using Physics-Informed GAT model</p>
+            <p className="text-muted-foreground">
+              Analysis completed using Physics-Informed GAT model
+              {fileName && ` • File: ${fileName}`}
+            </p>
           </div>
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
             <Download className="mr-2 h-4 w-4" />

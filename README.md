@@ -1,8 +1,65 @@
-# Welcome to your Lovable project
+# Cosmic Risk Analyzer
+
+A Physics-Informed Graph Attention Network (PI-GAT) based conjunction assessment system for analyzing satellite collision risks.
+
+## 🚀 Features
+
+- **3D Orbital Visualization**: Interactive Cesium.js-powered globe with satellite tracking
+- **AI-Powered Risk Assessment**: Physics-informed GAT model with uncertainty quantification
+- **Two-Stage Prediction**: Stage-1 for all events, Stage-2 refinement for high-risk cases
+- **Real-time Analysis**: Upload CDM files and get instant collision probability predictions
+- **Comprehensive Dashboard**: Risk categorization, uncertainty metrics, and detailed event views
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/c7510656-d214-4a50-a852-9b88449406df
+
+## 🏗️ Architecture
+
+### Frontend
+- **React 18** + **TypeScript** + **Vite**
+- **Cesium.js** for 3D visualization
+- **shadcn/ui** components
+- **Tailwind CSS** for styling
+- **React Query** for state management
+
+### Backend
+- **FastAPI** Python server
+- **PyTorch** for ML models
+- **Physics-Informed GAT** with MC-Dropout
+- Dual-stage prediction system
+
+## 🚦 Quick Start
+
+### Frontend Setup
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+### Backend Setup
+```bash
+# Navigate to backend
+cd backend
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Run FastAPI server
+python main.py
+```
+
+The frontend will be available at `http://localhost:8080` and the backend API at `http://localhost:8000`.
+
+## 📚 Documentation
+
+See [IMPLEMENTATION.md](./IMPLEMENTATION.md) for detailed technical documentation, API reference, and deployment guide.
 
 ## How can I edit this code?
 

@@ -1,27 +1,29 @@
-import { useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import CesiumViewer from "@/components/CesiumViewer";
 
 const Visualization = () => {
   const navigate = useNavigate();
-  const cesiumContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Cesium viewer will be initialized here
-    // For now, showing a placeholder
-    if (cesiumContainerRef.current) {
-      cesiumContainerRef.current.innerHTML = `
-        <div class="flex items-center justify-center h-full bg-secondary/50 rounded-lg">
-          <div class="text-center p-8">
-            <h3 class="text-2xl font-bold text-foreground mb-4">3D Orbital Visualization</h3>
-            <p class="text-muted-foreground">Cesium viewer will display orbital trajectories and conjunction events here</p>
-          </div>
-        </div>
-      `;
-    }
-  }, []);
+  // Example satellite positions (longitude, latitude, altitude in km)
+  const primarySatellite = {
+    position: [0, 0, 550] as [number, number, number],
+    noradId: "12345",
+    altitude: 550,
+  };
+
+  const secondarySatellite = {
+    position: [5, 5, 548] as [number, number, number],
+    noradId: "67890",
+    altitude: 548,
+  };
+
+  const tca = {
+    time: "2024-12-22 14:23:45 UTC",
+    missDistance: 125,
+  };
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -41,10 +43,13 @@ const Visualization = () => {
         </header>
 
         <Card className="p-6 bg-card border-border">
-          <div 
-            ref={cesiumContainerRef}
-            className="w-full h-[600px] rounded-lg overflow-hidden"
-          />
+          <div className="w-full h-[600px] rounded-lg overflow-hidden">
+            <CesiumViewer
+              primarySatellite={primarySatellite}
+              secondarySatellite={secondarySatellite}
+              tca={tca}
+            />
+          </div>
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

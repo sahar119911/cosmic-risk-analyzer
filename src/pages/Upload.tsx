@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload as UploadIcon, File, ArrowLeft } from "lucide-react";
+import { Upload as UploadIcon, File, ArrowLeft, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useProcessCDM, usePredict } from "@/hooks/useAPI";
 
 const Upload = () => {
   const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const { processCDM, isProcessing } = useProcessCDM();
+  const { predict, isPredicting } = usePredict();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -40,16 +43,34 @@ const Upload = () => {
     }
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (!file) {
       toast.error("Please select a file first");
       return;
     }
-    
-    toast.success("Analysis started - processing CDM file...");
-    setTimeout(() => {
+
+    try {
+      toast.info("Processing CDM file...");
+
+      // Process the CDM file to extract features
+      const predictionRequest = await processCDM(file);
+
+      toast.info("Running prediction with Physics-Informed GAT model...");
+
+      // Run prediction
+      const result = await predict(predictionRequest);
+
+      toast.success(`Analysis complete! Risk level: ${result.risk_category}`);
+
+      // Store results in sessionStorage for the Results page
+      sessionStorage.setItem("predictionResult", JSON.stringify(result));
+      sessionStorage.setItem("fileName", file.name);
+
       navigate("/results");
-    }, 1500);
+    } catch (error) {
+      console.error("Analysis failed:", error);
+      // Toast error is already shown by the hook
+    }
   };
 
   return (
@@ -118,9 +139,13 @@ const Upload = () => {
               </div>
               <Button
                 onClick={handleAnalyze}
+                disabled={isProcessing || isPredicting}
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                Run Analysis
+                {(isProcessing || isPredicting) && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {isProcessing ? "Processing..." : isPredicting ? "Predicting..." : "Run Analysis"}
               </Button>
             </div>
           )}
